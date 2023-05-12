@@ -119,7 +119,7 @@ if __name__ == '__main__':
     parser.add_argument('--ptb_rate', type=float, default=0.2)
     args = parser.parse_args()
         
-    root_dir = '/home/user/Documents/polyu/universal_defense/code/CLGA-main'
+    root_dir = '/home/wujingwen/attack_graph/attack_graph'
     save_dir = root_dir+'/'+str(args.dataset)
     try:
         os.makedirs(save_dir)
