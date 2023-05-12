@@ -6,7 +6,7 @@ import time
 import torch
 import numpy as np
 from torch_geometric.utils import dropout_adj, degree, to_undirected
-from simple_param.sp import SimpleParam
+#from simple_param.sp import SimpleParam
 from pGRACE.model import Encoder, GRACE
 from pGRACE.functional import drop_feature, drop_edge_weighted, \
     degree_drop_weights, evc_drop_weights, pr_drop_weights, \
@@ -60,9 +60,9 @@ def test(final=False):
     else:
         raise ValueError('Please check the split first!')
 
-    if final and use_nni:
+    if final:
         nni.report_final_result(acc)
-    elif use_nni:
+    else:
         nni.report_intermediate_result(acc)
 
     return acc
@@ -72,11 +72,11 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--device', type=str, default='cuda:0')
     parser.add_argument('--dataset', type=str, default='Cora')
-    parser.add_argument('--param', type=str, default='local:general.json')
+    #parser.add_argument('--param', type=str, default='local:general.json')
     parser.add_argument('--seed', type=int, default=39788)
     parser.add_argument('--verbose', type=str, default='train,eval,final')
-    parser.add_argument('--save_split', action="store_true")
-    parser.add_argument('--load_split', action="store_true")
+    #parser.add_argument('--save_split', action="store_true")
+    #parser.add_argument('--load_split', action="store_true")
     parser.add_argument('--attack_rate', type=float, default=0.10)
 
     default_param = {
@@ -103,18 +103,15 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
     # parse param
-    sp = SimpleParam(default=default_param)
-    param = sp(source=args.param, preprocess='nni')
+    #sp = SimpleParam(default=default_param)
+    #param = sp(source=args.param, preprocess='nni')
 
     # merge cli arguments and parsed param
-    for key in param_keys:
-        if getattr(args, key) is not None:
-            param[key] = getattr(args, key)
-
-    use_nni = args.param == 'nni'
-    if use_nni and args.device != 'cpu':
+    param = default_param
+    #use_nni = args.param == 'nni'
+    if args.device != 'cpu':
         args.device = 'cuda'
-
+    
     torch_seed = args.seed
     torch.manual_seed(torch_seed)
     random.seed(12345)
