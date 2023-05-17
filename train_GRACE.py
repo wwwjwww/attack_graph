@@ -8,7 +8,7 @@ import numpy as np
 from torch_geometric.utils import dropout_adj, degree, to_undirected
 #from simple_param.sp import SimpleParam
 from GRACE.model import Encoder, GRACE, drop_feature
-from pGRACE.eval import log_regression, MulticlassEvaluator
+from GRACE.eval import log_regression, MulticlassEvaluator
 from pGRACE.utils import get_base_model, get_activation, \
     generate_split, compute_pr, eigenvector_centrality
 from pGRACE.dataset import get_dataset
@@ -33,7 +33,7 @@ def train():
 
 def test(final=False):
     model.eval()
-    z = model(data.x, data.edge_index)
+    z = model()
     evaluator = MulticlassEvaluator()
     if args.dataset == 'Cora':
         acc = log_regression(z, data, evaluator, split='cora', num_epochs=3000)['acc']
