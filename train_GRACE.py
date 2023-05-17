@@ -131,40 +131,6 @@ if __name__ == '__main__':
         weight_decay=param['weight_decay']
     )
 
-    if param['drop_scheme'] == 'degree':
-        drop_weights = degree_drop_weights(data.edge_index).to(device)
-    elif param['drop_scheme'] == 'pr':
-        drop_weights = pr_drop_weights(data.edge_index, aggr='sink', k=200).to(device)
-    elif param['drop_scheme'] == 'evc':
-        drop_weights = evc_drop_weights(data).to(device)
-    else:
-        drop_weights = None
-
-    if param['drop_scheme'] == 'degree':
-        print(data.edge_index.shape)
-        edge_index_ = to_undirected(data.edge_index)
-        print(edge_index_.shape)
-        node_deg = degree(edge_index_[1], num_nodes=data.num_nodes)
-        print(node_deg.shape)
-        if args.dataset == 'WikiCS':
-            feature_weights = feature_drop_weights_dense(data.x, node_c=node_deg).to(device)
-        else:
-            feature_weights = feature_drop_weights(data.x, node_c=node_deg).to(device)
-    elif param['drop_scheme'] == 'pr':
-        node_pr = compute_pr(data.edge_index)
-        if args.dataset == 'WikiCS':
-            feature_weights = feature_drop_weights_dense(data.x, node_c=node_pr).to(device)
-        else:
-            feature_weights = feature_drop_weights(data.x, node_c=node_pr).to(device)
-    elif param['drop_scheme'] == 'evc':
-        node_evc = eigenvector_centrality(data)
-        if args.dataset == 'WikiCS':
-            feature_weights = feature_drop_weights_dense(data.x, node_c=node_evc).to(device)
-        else:
-            feature_weights = feature_drop_weights(data.x, node_c=node_evc).to(device)
-    else:
-        feature_weights = torch.ones((data.x.size(1),)).to(device)
-
     log = args.verbose.split(',')
     print('Begin training....')
 
