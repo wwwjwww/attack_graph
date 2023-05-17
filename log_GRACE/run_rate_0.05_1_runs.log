@@ -1,0 +1,16 @@
+torch.Size([2, 10604])
+torch.Size([2, 10604])
+torch.Size([2485])
+Begin training....
+/home/wujingwen/.conda/envs/py39/lib/python3.9/site-packages/torch_geometric/deprecation.py:22: UserWarning: 'dropout_adj' is deprecated, use 'dropout_edge' instead
+  warnings.warn(out)
+Traceback (most recent call last):
+  File "/home/wujingwen/attack_graph/attack_graph/train_GRACE.py", line 177, in <module>
+    loss = train()
+  File "/home/wujingwen/attack_graph/attack_graph/train_GRACE.py", line 30, in train
+    loss = model.loss(z1, z2, batch_size=0)
+  File "/home/wujingwen/attack_graph/attack_graph/pGRACE/model.py", line 168, in loss
+    l1 = self.batched_semi_loss(h1, h2, batch_size)
+  File "/home/wujingwen/attack_graph/attack_graph/pGRACE/model.py", line 145, in batched_semi_loss
+    num_batches = (num_nodes - 1) // batch_size + 1
+ZeroDivisionError: integer division or modulo by zero

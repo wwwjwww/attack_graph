@@ -45,7 +45,7 @@ class Encoder(torch.nn.Module):
         return x
 
 
-class Model(torch.nn.Module):
+class GRACE(torch.nn.Module):
     def __init__(self, encoder: Encoder, num_hidden: int, num_proj_hidden: int,
                  tau: float = 0.5):
         super(Model, self).__init__()

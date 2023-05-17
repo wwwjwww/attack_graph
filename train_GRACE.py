@@ -7,10 +7,7 @@ import torch
 import numpy as np
 from torch_geometric.utils import dropout_adj, degree, to_undirected
 #from simple_param.sp import SimpleParam
-from pGRACE.model import Encoder, GRACE
-from pGRACE.functional import drop_feature, drop_edge_weighted, \
-    degree_drop_weights, evc_drop_weights, pr_drop_weights, \
-    feature_drop_weights, drop_feature_weighted, feature_drop_weights_dense
+from GRACE.model import Encoder, GRACE, drop_feature
 from pGRACE.eval import log_regression, MulticlassEvaluator
 from pGRACE.utils import get_base_model, get_activation, \
     generate_split, compute_pr, eigenvector_centrality
