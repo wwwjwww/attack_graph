@@ -60,6 +60,7 @@ if __name__ == '__main__':
     #parser.add_argument('--save_split', action="store_true")
     #parser.add_argument('--load_split', action="store_true")
     parser.add_argument('--attack_rate', type=float, default=0.10)
+    parser.add_argument('--attack_method', type=str, default='FSA')
 
     default_param = {
         'learning_rate': 0.01,
@@ -73,7 +74,7 @@ if __name__ == '__main__':
         'drop_feature_rate_1': 0.1,
         'drop_feature_rate_2': 0.0,
         'tau': 0.4,
-        'num_epochs': 3000,
+        'num_epochs': 300,
         'weight_decay': 1e-5,
         'drop_scheme': 'degree',
     }
@@ -109,7 +110,7 @@ if __name__ == '__main__':
     data = dataset[0]
 
 
-    perturbed_adj = torch.from_numpy(np.loadtxt(save_dir+'/adj_FSA_%s.txt'%(args.attack_rate))).float().to(device)
+    perturbed_adj = torch.from_numpy(np.loadtxt(save_dir+'/adj_%s_%s.txt'%(args.attack_method, args.attack_rate))).float().to(device)
     data.edge_index = perturbed_adj.nonzero().T
 
     data = data.to(device)
@@ -148,7 +149,7 @@ if __name__ == '__main__':
         print(f'{acc}')
     if acc > best_acc:
         best_acc = acc
-    with open(f'./results_{args.dataset}_GRACE/result_acc_%s'%args.attack_rate, 'a') as f:
+    with open(f'./results_{args.dataset}_{args.attack_method}_GRACE/result_acc_%s'%args.attack_rate, 'a') as f:
         f.write(str(acc))
         f.write('\n')
     print(f'best accuracy = {best_acc}')
