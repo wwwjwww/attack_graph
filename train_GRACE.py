@@ -20,29 +20,14 @@ def train():
     model.train()
     optimizer.zero_grad()
 
-    def drop_edge(idx: int):
-        global drop_weights
-
-        if param['drop_scheme'] == 'uniform':
-            return dropout_adj(data.edge_index, p=param[f'drop_edge_rate_{idx}'])[0]
-        elif param['drop_scheme'] in ['degree', 'evc', 'pr']:
-            return drop_edge_weighted(data.edge_index, drop_weights, p=param[f'drop_edge_rate_{idx}'], threshold=0.7)
-        else:
-            raise Exception(f'undefined drop scheme: {param["drop_scheme"]}')
-
-    edge_index_1 = drop_edge(1)
-    edge_index_2 = drop_edge(2)
-    x_1 = drop_feature(data.x, param['drop_feature_rate_1'])
-    x_2 = drop_feature(data.x, param['drop_feature_rate_2'])
-
-    if param['drop_scheme'] in ['pr', 'degree', 'evc']:
-        x_1 = drop_feature_weighted(data.x, feature_weights, param['drop_feature_rate_1'])
-        x_2 = drop_feature_weighted(data.x, feature_weights, param['drop_feature_rate_2'])
-
+    edge_index_1 = dropout_adj(edge_index, p=param[f'drop_edge_rate_1'])[0]
+    edge_index_2 = dropout_adj(edge_index, p=param[f'drop_edge_rate_2'])[0]
+    x_1 = drop_feature(data.x, param['drop_edge_rate_1'])
+    x_2 = drop_feature(data.x, param['drop_edge_rate_2'])
     z1 = model(x_1, edge_index_1)
     z2 = model(x_2, edge_index_2)
 
-    loss = model.loss(z1, z2, batch_size=None)
+    loss = model.loss(z1, z2, batch_size=0)
     loss.backward()
     optimizer.step()
 
@@ -119,7 +104,7 @@ if __name__ == '__main__':
     device = torch.device(args.device)
 
     root_dir = '/home/wujingwen/attack_graph/attack_graph'
-    save_dir = root_dir + '/' + str(args.dataset)
+    save_dir = root_dir + '/' + str(args.dataset) + '/GRACE'
 
     path = osp.expanduser('dataset')
     path = osp.join(path, args.dataset)
@@ -200,7 +185,7 @@ if __name__ == '__main__':
         print(f'{acc}')
     if acc > best_acc:
         best_acc = acc
-    with open(f'./results_{args.dataset}/result_acc_%s'%args.attack_rate, 'a') as f:
+    with open(f'./results_{args.dataset}_GRACE/result_acc_%s'%args.attack_rate, 'a') as f:
         f.write(str(acc))
         f.write('\n')
     print(f'best accuracy = {best_acc}')

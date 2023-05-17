@@ -5,7 +5,7 @@ do
 	for i in 1 2 3 4 5 6 7 8 9 10
 	do
 		echo "$i runs $arrack"
-		nohup python -u train_GRACE.py --attack_rate $attack > ./run_rate_${attack}_${i}_runs.log 2>&1 &
+		nohup python -u train_GRACE.py --attack_rate $attack > ./log_GRACE/run_rate_${attack}_${i}_runs.log 2>&1 &
 		wait
 	done
 done
