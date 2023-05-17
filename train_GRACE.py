@@ -104,7 +104,7 @@ if __name__ == '__main__':
     device = torch.device(args.device)
 
     root_dir = '/home/wujingwen/attack_graph/attack_graph'
-    save_dir = root_dir + '/' + str(args.dataset) + '/GRACE'
+    save_dir = root_dir + '/' + str(args.dataset)
 
     path = osp.expanduser('dataset')
     path = osp.join(path, args.dataset)
