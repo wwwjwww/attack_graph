@@ -201,7 +201,7 @@ if __name__ == '__main__':
         print(f'{acc}')
     if acc > best_acc:
         best_acc = acc
-    with open(f'./results_{args.dataset}_{args.attack_method}_GCA/result_acc_%s'%(args.attack_rate), 'a') as f:
+    with open(f'./results/results_{args.dataset}_{args.attack_method}_GCA/result_acc_%s'%(args.attack_rate), 'a') as f:
         f.write(str(acc))
         f.write('\n')
     print(f'best accuracy = {best_acc}')

@@ -33,7 +33,7 @@ def train():
 
 def test(final=False):
     model.eval()
-    z = model()
+    z = model(data.x, data.edge_index)
     evaluator = MulticlassEvaluator()
     if args.dataset == 'Cora':
         acc = log_regression(z, data, evaluator, split='cora', num_epochs=3000)['acc']
@@ -149,7 +149,7 @@ if __name__ == '__main__':
         print(f'{acc}')
     if acc > best_acc:
         best_acc = acc
-    with open(f'./results_{args.dataset}_{args.attack_method}_GRACE/result_acc_%s'%args.attack_rate, 'a') as f:
+    with open(f'./results/results_{args.dataset}_{args.attack_method}_GRACE/result_acc_%s'%args.attack_rate, 'a') as f:
         f.write(str(acc))
         f.write('\n')
     print(f'best accuracy = {best_acc}')
