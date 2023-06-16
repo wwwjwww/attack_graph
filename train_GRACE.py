@@ -31,16 +31,12 @@ def train():
     return loss.item()
 
 
-def test(final=False):
+def test(split, final=False):
     model.eval()
     z = model(data.x, data.edge_index)
     evaluator = MulticlassEvaluator()
-    if args.dataset == 'Cora':
-        acc = log_regression(z, data, evaluator, split='cora', num_epochs=3000)['acc']
-    elif args.dataset == 'CiteSeer':
-        acc = log_regression(z, data, evaluator, split='citeseer', num_epochs=3000)['acc']
-    else:
-        raise ValueError('Please check the split first!')
+
+    acc = log_regression(z, data, evaluator, split, num_epochs=3000)['acc']
 
     if final:
         nni.report_final_result(acc)
@@ -120,8 +116,6 @@ if __name__ == '__main__':
                                            [data.num_nodes, data.num_nodes])
     edge_adj = edge_sp_adj.to_dense().to(device)
 
-    # generate split
-    split = generate_split(data.num_nodes, train_ratio=0.1, val_ratio=0.1)
 
     encoder = Encoder(data.num_features, param['num_hidden'], get_activation(param['activation']),
                       base_model=get_base_model(param['base_model']), k=param['num_layers']).to(device)
@@ -143,7 +137,24 @@ if __name__ == '__main__':
         if 'train' in log:
             print(f'(T) | Epoch={epoch:03d}, loss={loss:.4f}, training time={end-start}')
 
-    acc = test(final=True)
+    idx_train = np.loadtxt(save_dir + '/idx_train.txt')
+    idx_val = np.loadtxt(save_dir + '/idx_val.txt')
+    idx_test = np.loadtxt(save_dir + '/idx_test.txt')
+    train_mask = torch.zeros((data.num_nodes), dtype=torch.bool)
+    val_mask = torch.zeros((data.num_nodes), dtype=torch.bool)
+    test_mask = torch.zeros((data.num_nodes), dtype=torch.bool)
+    train_mask[idx_train] = True
+    val_mask[idx_val] = True
+    test_mask[idx_test] = True
+    data.train_mask = train_mask
+    data.val_mask = val_mask
+    data.test_mask = test_mask
+
+    split = {'train': data.train_mask,
+             'valid': data.val_mask,
+             'test': data.test_mask
+             }
+    acc = test(split, final=True)
 
     if 'final' in log:
         print(f'{acc}')

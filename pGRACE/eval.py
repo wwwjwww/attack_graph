@@ -9,42 +9,12 @@ from sklearn.metrics import roc_auc_score
 
 from pGRACE.model import LogReg
 
-
-def get_idx_split(data, split, preload_split):
-    if split[:4] == 'rand':
-        train_ratio = float(split.split(':')[1])
-        num_nodes = data.x.size(0)
-        train_size = int(num_nodes * train_ratio)
-        indices = torch.randperm(num_nodes)
-        return {
-            'train': indices[:train_size],
-            'val': indices[train_size:2 * train_size],
-            'test': indices[2 * train_size:]
-        }
-    elif split.startswith('cora') or split.startswith('citeseer'):
-        return {
-            'train': data.train_mask,
-            'test': data.test_mask,
-            'val': data.val_mask
-        }
-    elif split == 'preloaded':
-        assert preload_split is not None, 'use preloaded split, but preloaded_split is None'
-        train_mask, test_mask, val_mask = preload_split
-        return {
-            'train': train_mask,
-            'test': test_mask,
-            'val': val_mask
-        }
-    else:
-        raise RuntimeError(f'Unknown split type {split}')
-
-
 def log_regression(z,
                    data,
                    evaluator,
+                   split,
                    num_epochs: int = 5000,
                    test_device: Optional[str] = None,
-                   split: str = 'rand:0.1',
                    verbose: bool = False,
                    preload_split=None,
                    ):
@@ -56,8 +26,6 @@ def log_regression(z,
     classifier = LogReg(num_hidden, num_classes).to(test_device)
     optimizer = Adam(classifier.parameters(), lr=0.01, weight_decay=0.0)
 
-    split = get_idx_split(data, split, preload_split)
-    split = {k: v.to(test_device) for k, v in split.items()}
     f = nn.LogSoftmax(dim=-1)
     nll_loss = nn.NLLLoss()
 

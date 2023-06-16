@@ -42,9 +42,9 @@ def get_idx_split(data, split, preload_split):
 def log_regression(z,
                    data,
                    evaluator,
+                   split,
                    num_epochs: int = 5000,
                    test_device: Optional[str] = None,
-                   split: str = 'rand:0.1',
                    verbose: bool = False,
                    preload_split=None,
                    ):
@@ -56,8 +56,6 @@ def log_regression(z,
     classifier = LogReg(num_hidden, num_classes).to(test_device)
     optimizer = Adam(classifier.parameters(), lr=0.01, weight_decay=0.0)
 
-    split = get_idx_split(data, split, preload_split)
-    split = {k: v.to(test_device) for k, v in split.items()}
     f = nn.LogSoftmax(dim=-1)
     nll_loss = nn.NLLLoss()
 
